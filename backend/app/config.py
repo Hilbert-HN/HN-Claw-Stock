@@ -1,7 +1,7 @@
 """
 HN-Claw-Stock Backend Configuration
 """
-from pydantic_settings import BaseSettings
+from pydantic import BaseSettings
 from typing import Optional
 
 

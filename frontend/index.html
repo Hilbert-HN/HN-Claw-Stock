@@ -3,309 +3,318 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HN-Claw-Stock - AI Stock Analysis</title>
+    <title>HN-Claw-Stock | AI-Powered Stock Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6',
+                        success: '#10b981',
+                        danger: '#ef4444',
+                        warning: '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
         }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        .card-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
-        
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 28px;
+        .stock-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
-        
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 14px;
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #6366f1;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
         }
-        
-        .search-box {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-        
-        input[type="text"] {
-            flex: 1;
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        button {
-            padding: 12px 24px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        
-        button:hover {
-            background: #5568d3;
-        }
-        
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        
-        .result {
-            display: none;
-            margin-top: 20px;
-        }
-        
-        .result.show {
-            display: block;
-        }
-        
-        .stock-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #f0f0f0;
-            margin-bottom: 20px;
-        }
-        
-        .stock-symbol {
-            font-size: 32px;
-            font-weight: bold;
-            color: #333;
-        }
-        
-        .stock-name {
-            color: #666;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-        
-        .stock-price {
-            text-align: right;
-        }
-        
-        .price {
-            font-size: 32px;
-            font-weight: bold;
-            color: #333;
-        }
-        
-        .change {
-            font-size: 16px;
-            margin-top: 5px;
-        }
-        
-        .change.positive {
-            color: #10b981;
-        }
-        
-        .change.negative {
-            color: #ef4444;
-        }
-        
-        .analysis-card {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .analysis-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 15px;
-        }
-        
-        .recommendation {
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 18px;
-            margin-bottom: 15px;
-        }
-        
-        .recommendation.BUY {
-            background: #d1fae5;
-            color: #059669;
-        }
-        
-        .recommendation.SELL {
-            background: #fee2e2;
-            color: #dc2626;
-        }
-        
-        .recommendation.HOLD {
-            background: #fef3c7;
-            color: #d97706;
-        }
-        
-        .confidence {
-            margin-bottom: 15px;
-        }
-        
-        .confidence-bar {
-            height: 8px;
-            background: #e0e0e0;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 8px;
-        }
-        
-        .confidence-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            border-radius: 4px;
-            transition: width 0.5s;
-        }
-        
-        .reasoning {
-            color: #555;
-            line-height: 1.6;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-            display: none;
-        }
-        
-        .loading.show {
-            display: block;
-        }
-        
-        .error {
-            background: #fee2e2;
-            color: #dc2626;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            display: none;
-        }
-        
-        .error.show {
-            display: block;
-        }
-        
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e0e0e0;
-            color: #999;
-            font-size: 12px;
-        }
-        
-        .footer a {
-            color: #667eea;
-            text-decoration: none;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>🦞 HN-Claw-Stock</h1>
-        <p class="subtitle">AI-Powered US Stock Analysis & Trading Suggestions</p>
-        
-        <div class="search-box">
-            <input 
-                type="text" 
-                id="symbolInput" 
-                placeholder="Enter stock symbol (e.g., AAPL, TSLA, NVDA)"
-                onkeypress="if(event.key === 'Enter') analyzeStock()"
-            >
-            <button onclick="analyzeStock()" id="analyzeBtn">Analyze</button>
-        </div>
-        
-        <div class="loading" id="loading">
-            <p>🤖 AI is analyzing the stock...</p>
-        </div>
-        
-        <div class="error" id="error"></div>
-        
-        <div class="result" id="result">
-            <div class="stock-header">
-                <div>
-                    <div class="stock-symbol" id="stockSymbol"></div>
-                    <div class="stock-name" id="stockName"></div>
-                </div>
-                <div class="stock-price">
-                    <div class="price" id="stockPrice"></div>
-                    <div class="change" id="stockChange"></div>
-                </div>
-            </div>
-            
-            <div class="analysis-card">
-                <div class="analysis-title">🤖 AI Analysis</div>
-                <div class="recommendation" id="recommendation"></div>
-                
-                <div class="confidence">
-                    <div>Confidence: <span id="confidenceText"></span>%</div>
-                    <div class="confidence-bar">
-                        <div class="confidence-fill" id="confidenceBar"></div>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- Navigation -->
+    <nav class="gradient-bg text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <span class="text-3xl">🦞</span>
+                    <div>
+                        <h1 class="text-xl font-bold">HN-Claw-Stock</h1>
+                        <p class="text-xs text-indigo-200">AI-Powered Stock Analysis</p>
                     </div>
                 </div>
-                
-                <div class="reasoning" id="reasoning"></div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleDarkMode()" class="p-2 rounded-lg hover:bg-white/10 transition">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:inline"></i>
+                    </button>
+                    <a href="/docs" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition text-sm">
+                        <i class="fas fa-book mr-2"></i>API Docs
+                    </a>
+                </div>
             </div>
         </div>
-        
-        <div class="footer">
-            <p>Powered by <a href="https://github.com/Hilbert-HN/HN-Claw-Stock" target="_blank">HN-Claw-Stock</a> 🦞</p>
-            <p>Co-authored by Claw AI</p>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Search Section -->
+        <div class="mb-8">
+            <div class="relative max-w-2xl mx-auto">
+                <input 
+                    type="text" 
+                    id="stockSearch"
+                    placeholder="Search stocks (e.g., AAPL, TSLA, NVDA)..."
+                    class="w-full px-6 py-4 pl-12 rounded-xl border-2 border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white focus:border-primary focus:outline-none transition text-lg"
+                    onkeypress="if(event.key === 'Enter') searchStock()"
+                >
+                <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl"></i>
+                <button 
+                    onclick="searchStock()"
+                    class="absolute right-2 top-1/2 transform -translate-y-1/2 px-6 py-2 bg-primary hover:bg-indigo-600 text-white rounded-lg transition font-medium"
+                >
+                    Analyze
+                </button>
+            </div>
         </div>
-    </div>
-    
+
+        <!-- Popular Stocks -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+                <i class="fas fa-fire text-orange-500 mr-2"></i>Popular Stocks
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3" id="popularStocks">
+                <!-- Will be populated by JS -->
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading" class="hidden text-center py-12">
+            <div class="loading-spinner mx-auto mb-4"></div>
+            <p class="text-gray-600 dark:text-gray-400">AI is analyzing the stock...</p>
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorMessage" class="hidden mb-8">
+            <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 text-red-700 dark:text-red-400">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                <span id="errorText"></span>
+            </div>
+        </div>
+
+        <!-- Stock Analysis Result -->
+        <div id="stockResult" class="hidden">
+            <!-- Stock Header -->
+            <div class="gradient-bg rounded-2xl p-6 text-white mb-6 card-shadow">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                    <div>
+                        <div class="flex items-center space-x-3 mb-2">
+                            <h2 class="text-4xl font-bold" id="resultSymbol"></h2>
+                            <span class="px-3 py-1 bg-white/20 rounded-full text-sm" id="resultSector"></span>
+                        </div>
+                        <p class="text-indigo-100 text-lg" id="resultName"></p>
+                    </div>
+                    <div class="text-right mt-4 md:mt-0">
+                        <div class="text-4xl font-bold" id="resultPrice"></div>
+                        <div class="text-lg mt-1" id="resultChange"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- AI Analysis Card -->
+                <div class="md:col-span-2 bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white">
+                            <i class="fas fa-robot text-primary mr-2"></i>AI Analysis
+                        </h3>
+                        <span class="text-sm text-gray-500" id="analysisTime"></span>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-gray-600 dark:text-gray-400">Recommendation</span>
+                        </div>
+                        <div id="recommendationBadge" class="inline-block px-6 py-3 rounded-xl text-2xl font-bold"></div>
+                    </div>
+
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-gray-600 dark:text-gray-400">Confidence</span>
+                            <span class="text-gray-800 dark:text-white font-medium" id="confidenceText"></span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                            <div id="confidenceBar" class="gradient-bg h-3 rounded-full transition-all duration-500"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="text-gray-800 dark:text-white font-semibold mb-2">
+                            <i class="fas fa-lightbulb text-warning mr-2"></i>Reasoning
+                        </h4>
+                        <p class="text-gray-600 dark:text-gray-300 leading-relaxed" id="reasoning"></p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                            <div class="text-gray-600 dark:text-gray-400 text-sm mb-1">Target Price</div>
+                            <div class="text-2xl font-bold text-success" id="targetPrice"></div>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                            <div class="text-gray-600 dark:text-gray-400 text-sm mb-1">Stop Loss</div>
+                            <div class="text-2xl font-bold text-danger" id="stopLoss"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Stats -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">
+                        <i class="fas fa-chart-bar text-secondary mr-2"></i>Key Stats
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
+                            <span class="text-gray-600 dark:text-gray-400">Sector</span>
+                            <span class="text-gray-800 dark:text-white font-medium" id="statSector"></span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
+                            <span class="text-gray-600 dark:text-gray-400">RSI</span>
+                            <span class="text-gray-800 dark:text-white font-medium" id="statRsi"></span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
+                            <span class="text-gray-600 dark:text-gray-400">Volume</span>
+                            <span class="text-gray-800 dark:text-white font-medium" id="statVolume"></span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
+                            <span class="text-gray-600 dark:text-gray-400">Market Cap</span>
+                            <span class="text-gray-800 dark:text-white font-medium" id="statMarketCap"></span>
+                        </div>
+                        <div class="flex justify-between items-center py-2">
+                            <span class="text-gray-600 dark:text-gray-400">P/E Ratio</span>
+                            <span class="text-gray-800 dark:text-white font-medium" id="statPe"></span>
+                        </div>
+                    </div>
+
+                    <!-- Add to Watchlist -->
+                    <button onclick="addToWatchlist()" class="w-full mt-6 py-3 bg-primary hover:bg-indigo-600 text-white rounded-lg transition font-medium">
+                        <i class="fas fa-bookmark mr-2"></i>Add to Watchlist
+                    </button>
+                </div>
+            </div>
+
+            <!-- Price Chart -->
+            <div class="mt-6 bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">
+                    <i class="fas fa-chart-line text-success mr-2"></i>Price Trend
+                </h3>
+                <div class="h-64">
+                    <canvas id="priceChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Watchlist Section -->
+        <div class="mt-8">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+                <i class="fas fa-bookmark text-primary mr-2"></i>My Watchlist
+            </h2>
+            <div id="watchlist" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <p class="text-gray-500 dark:text-gray-400 col-span-full">No stocks in watchlist yet. Click "Add to Watchlist" to save your favorite stocks.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="text-center text-gray-600 dark:text-gray-400">
+                <p class="mb-2">
+                    <span class="font-semibold">HN-Claw-Stock</span> - AI-Powered Stock Analysis
+                </p>
+                <p class="text-sm">
+                    Co-authored by <span class="text-primary">🦞 Claw AI</span> | 
+                    <a href="https://github.com/Hilbert-HN/HN-Claw-Stock" class="text-primary hover:underline" target="_blank">GitHub</a>
+                </p>
+                <p class="text-xs mt-4 text-gray-500">
+                    Data is for demonstration purposes only. Not financial advice.
+                </p>
+            </div>
+        </div>
+    </footer>
+
     <script>
+        // Configuration
         const API_BASE = window.location.hostname === 'localhost' 
             ? 'http://localhost:8000' 
             : 'http://43.106.71.50:8000';
-        
-        async function analyzeStock() {
-            const symbol = document.getElementById('symbolInput').value.trim().toUpperCase();
-            
-            if (!symbol) {
-                showError('Please enter a stock symbol');
-                return;
+
+        // Popular stocks
+        const popularStocks = ['AAPL', 'TSLA', 'NVDA', 'MSFT', 'GOOGL', 'AMZN', 'META', 'NFLX'];
+
+        // Watchlist
+        let watchlist = JSON.parse(localStorage.getItem('watchlist') || '[]');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPopularStocks();
+            renderWatchlist();
+            loadDarkMode();
+        });
+
+        // Dark mode
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
+        }
+
+        function loadDarkMode() {
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.documentElement.classList.add('dark');
             }
-            
+        }
+
+        // Render popular stocks
+        function renderPopularStocks() {
+            const container = document.getElementById('popularStocks');
+            container.innerHTML = popularStocks.map(symbol => `
+                <button onclick="analyzeStock('${symbol}')" class="stock-card bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-primary transition text-center">
+                    <div class="font-bold text-gray-800 dark:text-white">${symbol}</div>
+                </button>
+            `).join('');
+        }
+
+        // Search stock
+        async function searchStock() {
+            const symbol = document.getElementById('stockSearch').value.trim().toUpperCase();
+            if (symbol) {
+                await analyzeStock(symbol);
+            }
+        }
+
+        // Analyze stock
+        async function analyzeStock(symbol) {
             // Show loading
-            document.getElementById('loading').classList.add('show');
-            document.getElementById('result').classList.remove('show');
-            document.getElementById('error').classList.remove('show');
-            document.getElementById('analyzeBtn').disabled = true;
-            
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('stockResult').classList.add('hidden');
+            document.getElementById('errorMessage').classList.add('hidden');
+
             try {
                 const response = await fetch(`${API_BASE}/api/stocks/${symbol}`);
                 
@@ -313,56 +322,167 @@
                     const error = await response.json();
                     throw new Error(error.detail || 'Failed to fetch stock data');
                 }
-                
+
                 const data = await response.json();
                 displayResult(data);
             } catch (error) {
                 showError(error.message);
             } finally {
-                document.getElementById('loading').classList.remove('show');
-                document.getElementById('analyzeBtn').disabled = false;
+                document.getElementById('loading').classList.add('hidden');
             }
         }
-        
+
+        // Display result
         function displayResult(data) {
             const { stock, analysis } = data;
-            
-            // Stock info
-            document.getElementById('stockSymbol').textContent = stock.symbol;
-            document.getElementById('stockName').textContent = stock.name;
-            document.getElementById('stockPrice').textContent = `$${stock.price?.toFixed(2) || 'N/A'}`;
+
+            // Stock header
+            document.getElementById('resultSymbol').textContent = stock.symbol;
+            document.getElementById('resultName').textContent = stock.name;
+            document.getElementById('resultSector').textContent = stock.sector || 'N/A';
+            document.getElementById('resultPrice').textContent = `$${stock.price?.toFixed(2) || 'N/A'}`;
             
             const change = stock.change;
             const changePercent = stock.changePercent;
-            const changeEl = document.getElementById('stockChange');
+            const changeEl = document.getElementById('resultChange');
             
             if (change !== null && changePercent !== null) {
                 const sign = change >= 0 ? '+' : '';
                 changeEl.textContent = `${sign}${change.toFixed(2)} (${sign}${changePercent.toFixed(2)}%)`;
-                changeEl.className = 'change ' + (change >= 0 ? 'positive' : 'negative');
+                changeEl.className = `text-lg ${change >= 0 ? 'text-green-300' : 'text-red-300'}`;
             } else {
                 changeEl.textContent = 'N/A';
-                changeEl.className = 'change';
             }
-            
-            // Analysis
-            const recEl = document.getElementById('recommendation');
+
+            // AI Analysis
+            const recEl = document.getElementById('recommendationBadge');
             recEl.textContent = analysis.recommendation;
-            recEl.className = 'recommendation ' + analysis.recommendation;
-            
-            document.getElementById('confidenceText').textContent = analysis.confidence;
-            document.getElementById('confidenceBar').style.width = analysis.confidence + '%';
-            
+            recEl.className = `inline-block px-6 py-3 rounded-xl text-2xl font-bold ${
+                analysis.recommendation === 'BUY' ? 'bg-green-100 text-green-700' :
+                analysis.recommendation === 'SELL' ? 'bg-red-100 text-red-700' :
+                'bg-yellow-100 text-yellow-700'
+            }`;
+
+            document.getElementById('confidenceText').textContent = `${analysis.confidence}%`;
+            document.getElementById('confidenceBar').style.width = `${analysis.confidence}%`;
             document.getElementById('reasoning').textContent = analysis.reasoning;
-            
+            document.getElementById('targetPrice').textContent = analysis.targetPrice ? `$${analysis.targetPrice}` : 'N/A';
+            document.getElementById('stopLoss').textContent = analysis.stopLoss ? `$${analysis.stopLoss}` : 'N/A';
+
+            // Stats
+            document.getElementById('statSector').textContent = stock.sector || 'N/A';
+            document.getElementById('statRsi').textContent = stock.rsi || 'N/A';
+            document.getElementById('statVolume').textContent = stock.volume ? stock.volume.toLocaleString() : 'N/A';
+            document.getElementById('statMarketCap').textContent = stock.marketCap ? `$${(stock.marketCap / 1e9).toFixed(2)}B` : 'N/A';
+            document.getElementById('statPe').textContent = stock.peRatio ? stock.peRatio.toFixed(2) : 'N/A';
+
             // Show result
-            document.getElementById('result').classList.add('show');
+            document.getElementById('stockResult').classList.remove('hidden');
+            
+            // Render chart
+            renderChart(stock.symbol);
         }
-        
+
+        // Show error
         function showError(message) {
-            const errorEl = document.getElementById('error');
-            errorEl.textContent = '❌ ' + message;
-            errorEl.classList.add('show');
+            document.getElementById('errorText').textContent = message;
+            document.getElementById('errorMessage').classList.remove('hidden');
+        }
+
+        // Render chart (mock data for now)
+        let priceChart = null;
+        function renderChart(symbol) {
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            
+            // Generate mock data
+            const labels = [];
+            const data = [];
+            const basePrice = 100 + Math.random() * 100;
+            
+            for (let i = 30; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                data.push(basePrice + Math.random() * 20 - 10);
+            }
+
+            if (priceChart) {
+                priceChart.destroy();
+            }
+
+            priceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `${symbol} Price`,
+                        data: data,
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // Watchlist functions
+        function addToWatchlist() {
+            const symbol = document.getElementById('resultSymbol').textContent;
+            if (!watchlist.includes(symbol)) {
+                watchlist.push(symbol);
+                localStorage.setItem('watchlist', JSON.stringify(watchlist));
+                renderWatchlist();
+                alert(`${symbol} added to watchlist!`);
+            } else {
+                alert(`${symbol} is already in your watchlist!`);
+            }
+        }
+
+        function renderWatchlist() {
+            const container = document.getElementById('watchlist');
+            
+            if (watchlist.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 col-span-full">No stocks in watchlist yet. Click "Add to Watchlist" to save your favorite stocks.</p>';
+                return;
+            }
+
+            container.innerHTML = watchlist.map(symbol => `
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                    <div>
+                        <div class="font-bold text-gray-800 dark:text-white">${symbol}</div>
+                        <div class="text-sm text-gray-500">Added recently</div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="analyzeStock('${symbol}')" class="px-3 py-1 bg-primary text-white rounded text-sm hover:bg-indigo-600 transition">
+                            View
+                        </button>
+                        <button onclick="removeFromWatchlist('${symbol}')" class="px-3 py-1 bg-red-100 text-red-600 rounded text-sm hover:bg-red-200 transition">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function removeFromWatchlist(symbol) {
+            watchlist = watchlist.filter(s => s !== symbol);
+            localStorage.setItem('watchlist', JSON.stringify(watchlist));
+            renderWatchlist();
         }
     </script>
 </body>

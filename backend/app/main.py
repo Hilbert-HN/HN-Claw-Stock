@@ -3,8 +3,10 @@ HN-Claw-Stock Backend API
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from app.config import settings
 from app.api.stocks import router as stocks_router
+import os
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -21,16 +23,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Get the frontend directory
+FRONTEND_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "frontend")
 
-@app.get("/")
+
+@app.get("/", response_class=HTMLResponse)
 async def root():
-    """Root endpoint"""
-    return {
-        "name": settings.APP_NAME,
-        "version": settings.APP_VERSION,
-        "status": "running",
-        "docs": "/docs"
-    }
+    """Serve the frontend HTML"""
+    frontend_file = os.path.join(FRONTEND_DIR, "index.html")
+    if os.path.exists(frontend_file):
+        with open(frontend_file, "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    return HTMLResponse(content="<h1>Frontend not found</h1>", status_code=404)
 
 
 @app.get("/api/health")

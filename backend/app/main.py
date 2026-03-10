@@ -23,8 +23,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Get the frontend directory
-FRONTEND_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "frontend")
+# Get the frontend directory (absolute path)
+FRONTEND_DIR = "/home/admin/HN-Claw-Stock/frontend"
 
 
 @app.get("/", response_class=HTMLResponse)

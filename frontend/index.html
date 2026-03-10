@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HN-Claw-Stock | AI-Powered Stock Analysis</title>
+    <title>HN-Claw-Stock | AI 智能股票分析</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -57,16 +57,16 @@
                     <span class="text-3xl">🦞</span>
                     <div>
                         <h1 class="text-xl font-bold">HN-Claw-Stock</h1>
-                        <p class="text-xs text-indigo-200">AI-Powered Stock Analysis</p>
+                        <p class="text-xs text-indigo-200">AI 智能股票分析</p>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <button onclick="toggleDarkMode()" class="p-2 rounded-lg hover:bg-white/10 transition">
+                    <button onclick="toggleDarkMode()" class="p-2 rounded-lg hover:bg-white/10 transition" title="切換深色模式">
                         <i class="fas fa-moon dark:hidden"></i>
                         <i class="fas fa-sun hidden dark:inline"></i>
                     </button>
                     <a href="/docs" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition text-sm">
-                        <i class="fas fa-book mr-2"></i>API Docs
+                        <i class="fas fa-book mr-2"></i>API 文檔
                     </a>
                 </div>
             </div>
@@ -81,7 +81,7 @@
                 <input 
                     type="text" 
                     id="stockSearch"
-                    placeholder="Search stocks (e.g., AAPL, TSLA, NVDA)..."
+                    placeholder="搜尋股票（例如：AAPL, TSLA, NVDA）..."
                     class="w-full px-6 py-4 pl-12 rounded-xl border-2 border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white focus:border-primary focus:outline-none transition text-lg"
                     onkeypress="if(event.key === 'Enter') searchStock()"
                 >
@@ -90,7 +90,7 @@
                     onclick="searchStock()"
                     class="absolute right-2 top-1/2 transform -translate-y-1/2 px-6 py-2 bg-primary hover:bg-indigo-600 text-white rounded-lg transition font-medium"
                 >
-                    Analyze
+                    分析
                 </button>
             </div>
         </div>
@@ -98,7 +98,7 @@
         <!-- Popular Stocks -->
         <div class="mb-8">
             <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-                <i class="fas fa-fire text-orange-500 mr-2"></i>Popular Stocks
+                <i class="fas fa-fire text-orange-500 mr-2"></i>熱門股票
             </h2>
             <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3" id="popularStocks">
                 <!-- Will be populated by JS -->
@@ -108,7 +108,7 @@
         <!-- Loading State -->
         <div id="loading" class="hidden text-center py-12">
             <div class="loading-spinner mx-auto mb-4"></div>
-            <p class="text-gray-600 dark:text-gray-400">AI is analyzing the stock...</p>
+            <p class="text-gray-600 dark:text-gray-400">🤖 AI 正在分析股票...</p>
         </div>
 
         <!-- Error Message -->
@@ -143,21 +143,21 @@
                 <div class="md:col-span-2 bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-xl font-bold text-gray-800 dark:text-white">
-                            <i class="fas fa-robot text-primary mr-2"></i>AI Analysis
+                            <i class="fas fa-robot text-primary mr-2"></i>AI 分析
                         </h3>
                         <span class="text-sm text-gray-500" id="analysisTime"></span>
                     </div>
                     
                     <div class="mb-6">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-gray-600 dark:text-gray-400">Recommendation</span>
+                            <span class="text-gray-600 dark:text-gray-400">建議操作</span>
                         </div>
                         <div id="recommendationBadge" class="inline-block px-6 py-3 rounded-xl text-2xl font-bold"></div>
                     </div>
 
                     <div class="mb-6">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-gray-600 dark:text-gray-400">Confidence</span>
+                            <span class="text-gray-600 dark:text-gray-400">置信度</span>
                             <span class="text-gray-800 dark:text-white font-medium" id="confidenceText"></span>
                         </div>
                         <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
@@ -167,18 +167,18 @@
 
                     <div class="mb-6">
                         <h4 class="text-gray-800 dark:text-white font-semibold mb-2">
-                            <i class="fas fa-lightbulb text-warning mr-2"></i>Reasoning
+                            <i class="fas fa-lightbulb text-warning mr-2"></i>分析理由
                         </h4>
                         <p class="text-gray-600 dark:text-gray-300 leading-relaxed" id="reasoning"></p>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                            <div class="text-gray-600 dark:text-gray-400 text-sm mb-1">Target Price</div>
+                            <div class="text-gray-600 dark:text-gray-400 text-sm mb-1">目標價</div>
                             <div class="text-2xl font-bold text-success" id="targetPrice"></div>
                         </div>
                         <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                            <div class="text-gray-600 dark:text-gray-400 text-sm mb-1">Stop Loss</div>
+                            <div class="text-gray-600 dark:text-gray-400 text-sm mb-1">止蝕價</div>
                             <div class="text-2xl font-bold text-danger" id="stopLoss"></div>
                         </div>
                     </div>
@@ -187,11 +187,11 @@
                 <!-- Key Stats -->
                 <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow">
                     <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">
-                        <i class="fas fa-chart-bar text-secondary mr-2"></i>Key Stats
+                        <i class="fas fa-chart-bar text-secondary mr-2"></i>關鍵數據
                     </h3>
                     <div class="space-y-4">
                         <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
-                            <span class="text-gray-600 dark:text-gray-400">Sector</span>
+                            <span class="text-gray-600 dark:text-gray-400">行業</span>
                             <span class="text-gray-800 dark:text-white font-medium" id="statSector"></span>
                         </div>
                         <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
@@ -199,22 +199,22 @@
                             <span class="text-gray-800 dark:text-white font-medium" id="statRsi"></span>
                         </div>
                         <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
-                            <span class="text-gray-600 dark:text-gray-400">Volume</span>
+                            <span class="text-gray-600 dark:text-gray-400">成交量</span>
                             <span class="text-gray-800 dark:text-white font-medium" id="statVolume"></span>
                         </div>
                         <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
-                            <span class="text-gray-600 dark:text-gray-400">Market Cap</span>
+                            <span class="text-gray-600 dark:text-gray-400">市值</span>
                             <span class="text-gray-800 dark:text-white font-medium" id="statMarketCap"></span>
                         </div>
                         <div class="flex justify-between items-center py-2">
-                            <span class="text-gray-600 dark:text-gray-400">P/E Ratio</span>
+                            <span class="text-gray-600 dark:text-gray-400">市盈率</span>
                             <span class="text-gray-800 dark:text-white font-medium" id="statPe"></span>
                         </div>
                     </div>
 
                     <!-- Add to Watchlist -->
                     <button onclick="addToWatchlist()" class="w-full mt-6 py-3 bg-primary hover:bg-indigo-600 text-white rounded-lg transition font-medium">
-                        <i class="fas fa-bookmark mr-2"></i>Add to Watchlist
+                        <i class="fas fa-bookmark mr-2"></i>加入自選
                     </button>
                 </div>
             </div>
@@ -222,7 +222,7 @@
             <!-- Price Chart -->
             <div class="mt-6 bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow">
                 <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">
-                    <i class="fas fa-chart-line text-success mr-2"></i>Price Trend
+                    <i class="fas fa-chart-line text-success mr-2"></i>價格走勢
                 </h3>
                 <div class="h-64">
                     <canvas id="priceChart"></canvas>
@@ -233,10 +233,10 @@
         <!-- Watchlist Section -->
         <div class="mt-8">
             <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-                <i class="fas fa-bookmark text-primary mr-2"></i>My Watchlist
+                <i class="fas fa-bookmark text-primary mr-2"></i>我的自選
             </h2>
             <div id="watchlist" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <p class="text-gray-500 dark:text-gray-400 col-span-full">No stocks in watchlist yet. Click "Add to Watchlist" to save your favorite stocks.</p>
+                <p class="text-gray-500 dark:text-gray-400 col-span-full">暫無自選股票。撳「加入自選」收藏你關心嘅股票。</p>
             </div>
         </div>
     </main>
@@ -246,14 +246,14 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="text-center text-gray-600 dark:text-gray-400">
                 <p class="mb-2">
-                    <span class="font-semibold">HN-Claw-Stock</span> - AI-Powered Stock Analysis
+                    <span class="font-semibold">HN-Claw-Stock</span> - AI 智能股票分析
                 </p>
                 <p class="text-sm">
-                    Co-authored by <span class="text-primary">🦞 Claw AI</span> | 
+                    由 <span class="text-primary">🦞 Claw AI</span> 協助開發 | 
                     <a href="https://github.com/Hilbert-HN/HN-Claw-Stock" class="text-primary hover:underline" target="_blank">GitHub</a>
                 </p>
                 <p class="text-xs mt-4 text-gray-500">
-                    Data is for demonstration purposes only. Not financial advice.
+                    數據僅供示範用途，不構成投資建議。
                 </p>
             </div>
         </div>
@@ -301,10 +301,10 @@
         }
 
         // Search stock
-        async function searchStock() {
+        function searchStock() {
             const symbol = document.getElementById('stockSearch').value.trim().toUpperCase();
             if (symbol) {
-                await analyzeStock(symbol);
+                analyzeStock(symbol);
             }
         }
 
@@ -320,7 +320,7 @@
                 
                 if (!response.ok) {
                     const error = await response.json();
-                    throw new Error(error.detail || 'Failed to fetch stock data');
+                    throw new Error(error.detail || '無法獲取股票數據');
                 }
 
                 const data = await response.json();
@@ -356,7 +356,7 @@
 
             // AI Analysis
             const recEl = document.getElementById('recommendationBadge');
-            recEl.textContent = analysis.recommendation;
+            recEl.textContent = translateRecommendation(analysis.recommendation);
             recEl.className = `inline-block px-6 py-3 rounded-xl text-2xl font-bold ${
                 analysis.recommendation === 'BUY' ? 'bg-green-100 text-green-700' :
                 analysis.recommendation === 'SELL' ? 'bg-red-100 text-red-700' :
@@ -383,6 +383,16 @@
             renderChart(stock.symbol);
         }
 
+        // Translate recommendation
+        function translateRecommendation(rec) {
+            const translations = {
+                'BUY': '買入',
+                'SELL': '賣出',
+                'HOLD': '持有'
+            };
+            return translations[rec] || rec;
+        }
+
         // Show error
         function showError(message) {
             document.getElementById('errorText').textContent = message;
@@ -402,7 +412,7 @@
             for (let i = 30; i >= 0; i--) {
                 const date = new Date();
                 date.setDate(date.getDate() - i);
-                labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                labels.push(date.toLocaleDateString('zh-HK', { month: 'short', day: 'numeric' }));
                 data.push(basePrice + Math.random() * 20 - 10);
             }
 
@@ -415,7 +425,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: `${symbol} Price`,
+                        label: `${symbol} 價格`,
                         data: data,
                         borderColor: '#6366f1',
                         backgroundColor: 'rgba(99, 102, 241, 0.1)',
@@ -447,9 +457,9 @@
                 watchlist.push(symbol);
                 localStorage.setItem('watchlist', JSON.stringify(watchlist));
                 renderWatchlist();
-                alert(`${symbol} added to watchlist!`);
+                alert(`${symbol} 已加入自選！`);
             } else {
-                alert(`${symbol} is already in your watchlist!`);
+                alert(`${symbol} 已經喺你嘅自選入面啦！`);
             }
         }
 
@@ -457,7 +467,7 @@
             const container = document.getElementById('watchlist');
             
             if (watchlist.length === 0) {
-                container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 col-span-full">No stocks in watchlist yet. Click "Add to Watchlist" to save your favorite stocks.</p>';
+                container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 col-span-full">暫無自選股票。撳「加入自選」收藏你關心嘅股票。</p>';
                 return;
             }
 
@@ -465,11 +475,11 @@
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 flex justify-between items-center">
                     <div>
                         <div class="font-bold text-gray-800 dark:text-white">${symbol}</div>
-                        <div class="text-sm text-gray-500">Added recently</div>
+                        <div class="text-sm text-gray-500">最近加入</div>
                     </div>
                     <div class="flex space-x-2">
                         <button onclick="analyzeStock('${symbol}')" class="px-3 py-1 bg-primary text-white rounded text-sm hover:bg-indigo-600 transition">
-                            View
+                            查看
                         </button>
                         <button onclick="removeFromWatchlist('${symbol}')" class="px-3 py-1 bg-red-100 text-red-600 rounded text-sm hover:bg-red-200 transition">
                             <i class="fas fa-trash"></i>

@@ -1,41 +1,85 @@
 # HN-Claw-Stock 📈
 
-> Stock Analysis & Trading Assistant - Powered by AI
+> AI-Powered US Stock Selection & Trading Suggestions Web Application
 
 ## 🎯 Project Goal
 
-Building an intelligent stock analysis and trading assistance tool.
+Building an intelligent web application for US stock selection and buy/sell trading suggestions powered by AI analysis.
 
 ## 🚧 Status
 
-**In Development** - This is a proof of concept (POC) project.
+**In Development** - Proof of Concept (POC)
 
-## 📋 Features (Planned)
+## 📋 Features
 
-- [ ] Real-time stock data fetching
-- [ ] Technical analysis indicators
-- [ ] AI-powered insights
+### Phase 1 (Core)
+- [ ] Real-time US stock data fetching (Yahoo Finance)
+- [ ] Stock screener with filters
+- [ ] Technical indicators (MA, RSI, MACD, Bollinger Bands)
+- [ ] Basic AI-powered buy/sell suggestions
+- [ ] Simple web UI
+
+### Phase 2 (Advanced)
 - [ ] Portfolio tracking
-- [ ] Alert system
-- [ ] Trading signals
+- [ ] Price alerts
+- [ ] Historical performance analysis
+- [ ] Advanced AI insights
+- [ ] User authentication
+
+### Phase 3 (Production)
+- [ ] Real-time data streaming
+- [ ] Multiple data sources
+- [ ] Backtesting engine
+- [ ] Risk management
+- [ ] Mobile responsive UI
 
 ## 🛠️ Tech Stack
 
-- **Language:** Python / TypeScript (TBD)
-- **Data Source:** (TBD)
-- **AI:** OpenClaw + Qwen Models
-- **Deployment:** Alibaba Cloud
+| Component | Technology |
+|-----------|------------|
+| **Frontend** | React + Tailwind CSS |
+| **Backend** | Python + FastAPI |
+| **Data Source** | Yahoo Finance (yfinance) |
+| **AI** | Qwen Models (Dashscope) |
+| **Database** | SQLite (dev) / PostgreSQL (prod) |
+| **Deployment** | Alibaba Cloud |
 
 ## 📁 Project Structure
 
 ```
 HN-Claw-Stock/
-├── src/              # Source code
-├── data/             # Data storage
-├── tests/            # Test files
-├── docs/             # Documentation
-├── config/           # Configuration files
-└── scripts/          # Utility scripts
+├── frontend/           # React frontend
+│   ├── src/
+│   ├── public/
+│   └── package.json
+├── backend/            # Python backend
+│   ├── app/
+│   │   ├── api/
+│   │   ├── models/
+│   │   ├── services/
+│   │   └── main.py
+│   ├── requirements.txt
+│   └── config.py
+├── data/               # Data storage
+├── tests/              # Test files
+├── docs/               # Documentation
+└── scripts/            # Utility scripts
+```
+
+## 🚀 Quick Start
+
+### Backend
+```bash
+cd backend
+pip install -r requirements.txt
+python -m uvicorn app.main:app --reload
+```
+
+### Frontend
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
 ## 🤝 Collaboration
